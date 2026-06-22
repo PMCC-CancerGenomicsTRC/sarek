@@ -1,0 +1,9 @@
+name: ancestry_pca
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - plink2 >=2.00a
+  - bcftools >=1.15
+  - htslib >=1.15
