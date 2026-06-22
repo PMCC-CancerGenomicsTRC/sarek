@@ -602,7 +602,7 @@ workflow SAREK {
                 params.ld_window_kb,
                 params.ld_step_kb,
                 params.ld_r2,
-                params.pca_n_components,
+                params.pca_n_components
             )
 
             versions = versions.mix(ANCESTRY_PCA.out.versions)

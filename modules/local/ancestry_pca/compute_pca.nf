@@ -32,7 +32,7 @@ process ANCESTRY_PCA_COMPUTE_PCA {
 
     # Log variance explained for first 5 PCs (or fewer if n_components < 5)
     echo "Variance explained (eigenvalues):" > compute_pca.log
-    N_REPORT=\$(( ${n_components} < 5 ? ${n_components} : 5 ))
+    if [ ${n_components} -lt 5 ]; then N_REPORT=${n_components}; else N_REPORT=5; fi
     awk -v n="\${N_REPORT}" 'NR<=n {printf "  PC%d: %s\\n", NR, \$1}' plink2.eigenval >> compute_pca.log
     echo "" >> compute_pca.log
     echo "Full eigenval file: plink2.eigenval" >> compute_pca.log

@@ -25,16 +25,15 @@ process ANCESTRY_PCA_FORMAT_OUTPUT {
     """
     # Format eigenvec: drop #FID column, rename #IID to sample_id
     awk 'BEGIN{OFS="\\t"} NR==1 {
-        # Replace "#FID" header marker; first col is #FID, second is #IID
-        \$1=""
-        sub(/^\\t/, "", \$0)
-        # Replace "#IID" with "sample_id"
-        sub(/#IID/, "sample_id")
+        sub(/#IID/, "sample_id", \$2)
+        \$1=\$2
+        for (i=3; i<=NF; i++) \$(i-1)=\$i
+        NF--
         print
     } NR>1 {
-        # Drop first column (FID)
-        \$1=""
-        sub(/^\\t/, "", \$0)
+        \$1=\$2
+        for (i=3; i<=NF; i++) \$(i-1)=\$i
+        NF--
         print
     }' ${eigenvec} > pca.tsv
 
