@@ -51,6 +51,9 @@ include { VCF_QC_BCFTOOLS_VCFTOOLS                          } from '../../subwor
 // Annotation
 include { VCF_ANNOTATE_ALL                                  } from '../../subworkflows/local/vcf_annotate_all'
 
+// Ancestry PCA
+include { ANCESTRY_PCA                                      } from '../../subworkflows/local/ancestry_pca/main'
+
 // MULTIQC
 include { MULTIQC                                           } from '../../modules/nf-core/multiqc'
 
@@ -579,6 +582,33 @@ workflow SAREK {
             // Gather used softwares versions
             versions = versions.mix(VCF_ANNOTATE_ALL.out.versions)
             reports = reports.mix(VCF_ANNOTATE_ALL.out.reports)
+        }
+    }
+
+    // ANCESTRY PCA — flag-gated, runs on germline joint VCF if available
+    if (params.run_ancestry) {
+        // Only meaningful with --joint_germline; warn if not set
+        if (!params.joint_germline) {
+            log.warn "WARNING: --run_ancestry is set but --joint_germline is not. Ancestry PCA requires a multi-sample cohort VCF. Skipping ancestry analysis."
+        } else {
+            // Filter to the merged joint germline VCF (contains all samples)
+            ch_germline_joint_vcf = BAM_VARIANT_CALLING_GERMLINE_ALL.out.vcf_all
+                .filter { meta, vcf -> meta.id == 'joint_germline' || vcf.name.contains('joint') }
+
+            ANCESTRY_PCA(
+                ch_germline_joint_vcf,
+                params.pca_maf,
+                params.pca_max_missing,
+                params.ld_window_kb,
+                params.ld_step_kb,
+                params.ld_r2,
+                params.pca_n_components
+            )
+
+            versions = versions.mix(ANCESTRY_PCA.out.versions)
+
+            // Feed logs to MultiQC
+            reports = reports.mix(ANCESTRY_PCA.out.pca_log.collect { _meta, log -> log })
         }
     }
 

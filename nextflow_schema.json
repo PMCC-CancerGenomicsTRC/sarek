@@ -11,7 +11,10 @@
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
             "help_text": "Specify input samplesheet, step and output folder.",
-            "required": ["step", "outdir"],
+            "required": [
+                "step",
+                "outdir"
+            ],
             "properties": {
                 "input": {
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
@@ -210,7 +213,12 @@
                     "default": "Adjacency",
                     "fa_icon": "fas fa-tape",
                     "description": "Default strategy for fgbio UMI-based consensus read generation ",
-                    "enum": ["Identity", "Edit", "Adjacency", "Paired"]
+                    "enum": [
+                        "Identity",
+                        "Edit",
+                        "Adjacency",
+                        "Paired"
+                    ]
                 },
                 "umi_in_read_header": {
                     "type": "boolean",
@@ -223,7 +231,14 @@
                     "fa_icon": "fas fa-tape",
                     "description": "Location of the UMI(s) to be extracted with fastp.",
                     "help_text": "Use if UMIs are not present in the read header, but in a specific location within the reads/fastq header index. This will be used to extract UMIs from reads or index in the fastq header and store them in the RX tag.",
-                    "enum": ["read1", "read2", "per_read", "index1", "index2", "per_index"]
+                    "enum": [
+                        "read1",
+                        "read2",
+                        "per_read",
+                        "index1",
+                        "index2",
+                        "per_index"
+                    ]
                 },
                 "umi_length": {
                     "type": "integer",
@@ -280,7 +295,13 @@
                     "type": "string",
                     "default": "bwa-mem",
                     "fa_icon": "fas fa-puzzle-piece",
-                    "enum": ["bwa-mem", "bwa-mem2", "dragmap", "sentieon-bwamem", "parabricks"],
+                    "enum": [
+                        "bwa-mem",
+                        "bwa-mem2",
+                        "dragmap",
+                        "sentieon-bwamem",
+                        "parabricks"
+                    ],
                     "description": "Specify aligner to be used to map reads to reference genome.",
                     "help_text": "Sarek will build missing indices automatically if not provided. Set `--bwa false` if indices should be (re-)built.\nIf DragMap is selected as aligner, it is recommended to skip baserecalibration with `--skip_tools baserecalibrator`. For more info see [here](https://gatk.broadinstitute.org/hc/en-us/articles/4407897446939--How-to-Run-germline-single-sample-short-variant-discovery-in-DRAGEN-mode)."
                 },
@@ -772,7 +793,11 @@
                     "type": "string",
                     "default": "vcf",
                     "description": "VEP output-file format.",
-                    "enum": ["json", "tab", "vcf"],
+                    "enum": [
+                        "json",
+                        "tab",
+                        "vcf"
+                    ],
                     "help_text": "Sets the format of the output-file from VEP. Available formats: json, tab and vcf.",
                     "fa_icon": "fas fa-table"
                 },
@@ -871,7 +896,10 @@
                     "type": "string",
                     "description": "ASCAT genome.",
                     "help_text": "Must be set to run ASCAT, either hg19 or hg38.\n\nIf you use AWS iGenomes, this has already been set for you appropriately.",
-                    "enum": ["hg19", "hg38"]
+                    "enum": [
+                        "hg19",
+                        "hg38"
+                    ]
                 },
                 "ascat_alleles": {
                     "type": "string",
@@ -1237,7 +1265,14 @@
                     "description": "Method used to save pipeline results to output directory.",
                     "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
                     "fa_icon": "fas fa-copy",
-                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+                    "enum": [
+                        "symlink",
+                        "rellink",
+                        "link",
+                        "copy",
+                        "copyNoFollow",
+                        "move"
+                    ],
                     "hidden": true
                 },
                 "email": {
@@ -1326,7 +1361,10 @@
                     "hidden": true
                 },
                 "help": {
-                    "type": ["boolean", "string"],
+                    "type": [
+                        "boolean",
+                        "string"
+                    ],
                     "description": "Display the help message."
                 },
                 "help_full": {
@@ -1336,6 +1374,71 @@
                 "show_hidden": {
                     "type": "boolean",
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                }
+            }
+        },
+        "ancestry_pca_options": {
+            "title": "Ancestry PCA Options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "QC via principal component analysis of germline variants",
+            "properties": {
+                "run_ancestry": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-dna",
+                    "description": "Enable ancestry PCA analysis on joint germline VCF"
+                },
+                "pca_n_components": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 2,
+                    "fa_icon": "fas fa-chart-line",
+                    "description": "Number of principal components to compute (typically 3\u201320)"
+                },
+                "pca_maf": {
+                    "type": "number",
+                    "default": 0.05,
+                    "minimum": 0,
+                    "maximum": 0.5,
+                    "fa_icon": "fas fa-filter",
+                    "description": "Minor allele frequency threshold for PCA variant filtering (default: 0.05)"
+                },
+                "pca_max_missing": {
+                    "type": "number",
+                    "default": 0.01,
+                    "minimum": 0,
+                    "maximum": 1,
+                    "fa_icon": "fas fa-filter",
+                    "description": "Maximum genotype missingness per site for PCA (default: 0.01)"
+                },
+                "ld_window_kb": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "LD pruning window size in kilobases (default: 50)"
+                },
+                "ld_step_kb": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "LD pruning step size in kilobases (default: 10)"
+                },
+                "ld_r2": {
+                    "type": "number",
+                    "default": 0.1,
+                    "minimum": 0,
+                    "maximum": 1,
+                    "fa_icon": "fas fa-compress-arrows-alt",
+                    "description": "LD pruning r\u00b2 threshold (default: 0.1 \u2014 strict)"
+                },
+                "plot_pca": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-chart-scatter",
+                    "description": "Generate PC1 vs PC2 scatter plot (requires R/ggplot2)"
                 }
             }
         }
@@ -1376,6 +1479,9 @@
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/ancestry_pca_options"
         }
     ]
 }
